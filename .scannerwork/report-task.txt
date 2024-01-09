@@ -2,5 +2,5 @@ projectKey=blogs-ui
 serverUrl=http://localhost:9000
 serverVersion=10.3.0.82913
 dashboardUrl=http://localhost:9000/dashboard?id=blogs-ui
-ceTaskId=AYzs6ICWJ3RhornaoWkL
-ceTaskUrl=http://localhost:9000/api/ce/task?id=AYzs6ICWJ3RhornaoWkL
+ceTaskId=AYztiqh9J3RhornaoWkM
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AYztiqh9J3RhornaoWkM

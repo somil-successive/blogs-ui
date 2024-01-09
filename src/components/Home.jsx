@@ -6,18 +6,18 @@ import PropTypes from 'prop-types';
 
 const {Content,Sider } = Layout;
 
-const items = [
-  {
-    id: 1,
-    icon: React.createElement(EyeOutlined),
-    label: "list",
-  },
-  {
-    id: 2,
-    icon: React.createElement(UploadOutlined),
-    label: "upload",
-  },
-];
+// const items = [
+//   {
+//     id: 1,
+//     icon: React.createElement(EyeOutlined),
+//     label: "list",
+//   },
+//   {
+//     id: 2,
+//     icon: React.createElement(UploadOutlined),
+//     label: "upload",
+//   },
+// ];
 
 const Home = ({ children }) => {
   const navigate = useNavigate();
