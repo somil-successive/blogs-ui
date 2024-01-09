@@ -1,0 +1,38 @@
+.bulk-upload-container {
+  margin-left: 0px;
+  margin-right: 20px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.table-row {
+  background-color: #f2f2f2;
+}
+
+.record-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.view-errors button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #3498db;
+}
+
+.view-errors button:hover {
+  color: #2980b9;
+}
