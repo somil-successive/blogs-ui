@@ -1,50 +1,57 @@
 import React, { useState } from "react";
-import { Card, Button, Input, Space, Typography, Form } from "antd";
+import {
+  Card,
+  Button,
+  Input,
+  Space,
+  Typography,
+  Form,
+  message,
+  notification,
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Login = () => {
   const [account, setAccount] = useState("login");
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
 
   const handleLogin = async (values) => {
     try {
-      console.log(values);
+      console.log("event :", values);
 
-      const res = await axios.post(
-        "http://localhost:4000/user/login",
-        values
-      );
+      const res = await axios.post("http://localhost:4000/user/login", values);
 
       if (res.status === 200) {
-        console.log("Login successful");
-
+        localStorage.setItem("authToken", res?.data.authToken);
+        message.success("Login Successfull");
         navigate("/view");
       } else {
-        console.error("Login failed");
+        throw new Error("Login Failed");
       }
     } catch (error) {
-      console.log("Error during login", error);
+      notification.error({
+        message: "Error",
+        description: "Invalid Credentials",
+      });
     }
   };
 
   const handleRegister = async (values) => {
     try {
-
       const res = await axios.post(
         "http://localhost:4000/user/register",
         values
       );
 
       if (res.status === 200) {
-        console.log("Register successful");
-        alert("Registered successfully");
+        message.success("Registered Successfully");
       } else {
-        console.error("Register failed");
+        throw new Error("Register failed");
       }
     } catch (error) {
-      console.log("Error during register", error);
+      message.error("Register Failed");
     }
   };
 
@@ -69,10 +76,11 @@ const Login = () => {
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           backgroundColor: "#f7f7f7",
         }}
-        
       >
-        <Form data-testid='login-form' onFinish={account === 'login' ? handleLogin : handleRegister}>
-
+        <Form
+          data-testid="login-form"
+          onFinish={account === "login" ? handleLogin : handleRegister}
+        >
           {account === "login" ? (
             <Space direction="vertical">
               <Form.Item
@@ -94,14 +102,17 @@ const Login = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                data-testid="logBtn"
+                data-testid="loginBtn"
                 block
-                onClick={handleLogin}
               >
                 Login
               </Button>
               <Typography style={{ margin: "10px 0" }}>OR</Typography>
-              <Button type="dashed" onClick={() => setAccount("register")}>
+              <Button
+                data-testid="reg-btn"
+                type="dashed"
+                onClick={() => setAccount("register")}
+              >
                 Create new account
               </Button>
             </Space>
@@ -138,16 +149,31 @@ const Login = () => {
               <Form.Item
                 label="Password"
                 name="password"
-                rules={[{ required: true, message: "Password is required" }]}
+                rules={[
+                  { required: true, message: "Password is required" },
+                  {
+                    min: 8,
+                    message: "Password must be at least 8 characters",
+                  }
+                ]}
                 style={{ margin: 5 }}
               >
                 <Input.Password />
               </Form.Item>
-              <Button type="primary" block onClick={handleRegister} htmlType="submit">
+              <Button
+                data-testid="register-btn"
+                type="primary"
+                block
+                htmlType="submit"
+              >
                 Register
               </Button>
               <Typography style={{ margin: "10px 0" }}>OR</Typography>
-              <Button type="dashed" onClick={() => setAccount("login")}>
+              <Button
+                data-testid="go-to-login"
+                type="dashed"
+                onClick={() => setAccount("login")}
+              >
                 Already have an account
               </Button>
             </Space>

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import App from "./App";
 
 Object.defineProperty(window, "matchMedia", {
@@ -17,4 +17,6 @@ Object.defineProperty(window, "matchMedia", {
 
 test("renders learn react link", () => {
   render(<App />);
+
+  expect(window.location.pathname).toBe("/");
 });

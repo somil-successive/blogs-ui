@@ -1,13 +1,15 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Table, Spin } from "antd";
 import Home from "./Home";
+import axios from "axios";
 
 const BulkErrorDetail = () => {
   const { session_id } = useParams();
 
   const [bulkErrors, setBulkErrors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [myError, setMyError] = useState("");
 
   const handleApiResponse = async () => {
     try {
@@ -15,9 +17,12 @@ const BulkErrorDetail = () => {
         `http://localhost:4000/blogs/bulk-uploads-errors/${session_id}`
       );
       setBulkErrors(apiResponse.data.data);
-      setLoading(false);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.log("Error fetching data:");
+
+      setMyError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -25,31 +30,41 @@ const BulkErrorDetail = () => {
     handleApiResponse();
   }, [session_id]);
 
+  const columns = [
+    {
+      title: "Row Number",
+      dataIndex: "rowNumber",
+      key: "rowNumber",
+    },
+    {
+      title: "Error Detail",
+      dataIndex: "errorDetails",
+      key: "errorDetails",
+    },
+  ];
+
+  if (loading) {
+    return <Spin data-testid="spinner" size="large" />;
+  }
+
+  if(bulkErrors.length===0){
+    return <h3>No Record Found!</h3>
+  }
+
+  if (myError) {
+    return <h3>Error fetching data</h3>;
+  }
+
   return (
     <Home>
       <div className="bulk-error-container">
         <div className="table-container">
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Row </th>
-                  <th> Detail</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {bulkErrors?.map((item) => (
-                  <tr key={item.session_id}>
-                    <td>{item.rowNumber}</td>
-                    <td>{item.errorDetails}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+          <Table
+            data-tesid="myTable"
+            dataSource={bulkErrors}
+            columns={columns}
+            pagination={false}
+          />
         </div>
       </div>
     </Home>

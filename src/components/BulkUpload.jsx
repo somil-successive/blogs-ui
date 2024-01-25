@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Home from "./Home";
-import { Card, Progress } from "antd";
+import { Card, Spin } from "antd";
 
 const BulkUpload = () => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -14,7 +13,6 @@ const BulkUpload = () => {
 
   const handleFileUpload = async () => {
     setUploading(true);
-    setUploadProgress(0);
     const formData = new FormData();
     formData.append("file", file);
 
@@ -23,18 +21,13 @@ const BulkUpload = () => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-        onUploadProgress: (progressEvent) => {
-          const progress = Math.round(
-            (progressEvent.loaded / progressEvent.total) * 100
-          );
-          setUploadProgress(progress);
-        },
       });
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    } finally {
       setUploading(false);
       alert("File uploaded successfully.");
+    } catch (error) {
+      alert("Error uploading file:");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -42,7 +35,8 @@ const BulkUpload = () => {
     <Home>
       {uploading ? (
         <div>
-          <Progress percent={uploadProgress} status="active" />
+          {/* <Progress status="active" /> */}
+          <Spin />
         </div>
       ) : null}
 
@@ -60,10 +54,16 @@ const BulkUpload = () => {
         }}
       >
         <div className="upload-file-container">
-          <input type="file" accept=".csv" onChange={handleFileChange} />
+          <input
+            type="file"
+            placeholder="select file"
+            accept=".csv"
+            onChange={handleFileChange}
+          />
           <br />
           <br />
           <button
+            data-testid="upload-btn"
             className="upload-button"
             style={{
               backgroundColor: "#3498db",

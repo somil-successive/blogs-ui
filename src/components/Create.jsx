@@ -88,8 +88,6 @@ const Create = () => {
   };
 
   const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-
     const updatedBlogsItem = {
       title: values.title,
       body: {
@@ -111,19 +109,26 @@ const Create = () => {
       },
     };
 
-    if (id) {
-      handleUpdate(updatedBlogsItem);
-    } else {
+    if (id === "create") {
       handleAdd(updatedBlogsItem);
+    } else {
+      handleUpdate(updatedBlogsItem);
     }
   };
 
   const handleAdd = async (newBlogsItem) => {
     try {
-      await axios.post("http://localhost:4000/blogs/create", newBlogsItem);
+      await axios.post("http://localhost:4000/blogs/create", newBlogsItem, {
+        headers: {
+          Authorization: localStorage.getItem("authToken"),
+        },
+      });
       navigate("/view");
     } catch (error) {
-      console.error("Error adding item:", error);
+      if (error.response?.status === 401) {
+        navigate("/");
+        localStorage.removeItem("authToken");
+      }
     }
   };
 
@@ -131,24 +136,35 @@ const Create = () => {
     try {
       await axios.patch(
         `http://localhost:4000/blogs/updatebyid/${id}`,
-        updatedBlogsItem
+        updatedBlogsItem,
+        {
+          headers: {
+            Authorization: localStorage.getItem("authToken"),
+          },
+        }
       );
+
       navigate("/view");
     } catch (error) {
-      console.error("Error updating item:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem("authToken");
+        navigate("/");
+      }
     }
   };
 
   return (
     <Home>
-      <h2 style={{ margin: "auto" }}>{id ? "EDIT BLOG" : "ADD BLOG"}</h2>
+      <h2 style={{ margin: "auto" }}>
+        {id !== "create" ? "EDIT BLOG" : "ADD BLOG"}
+      </h2>
       <Card
         style={{
           width: "1500",
           margin: 0,
           borderRadius: 10,
           boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-          backgroundColor: "#f7f7f7",
+          backgroundColor: "#ccc",
         }}
       >
         <Form
@@ -200,23 +216,37 @@ const Create = () => {
             <InputNumber />
           </Form.Item>
           <Form.Item
+            aria-label="Approved"
             label="Approved"
             name={"approved"}
             rules={[{ required: true, message: "Please mention approved" }]}
           >
             <Radio.Group>
-              <Radio value="true"> true </Radio>
-              <Radio value="false"> false </Radio>
+              <Radio value="true" data-testid="approved-true">
+                {" "}
+                true{" "}
+              </Radio>
+              <Radio value="false" data-testid="approved-false">
+                {" "}
+                false{" "}
+              </Radio>
             </Radio.Group>
           </Form.Item>
           <Form.Item
+            aria-label="isSensitive"
             label="isSensitive"
             name={"isSensitive"}
             rules={[{ required: true, message: "Please specify sensitivity" }]}
           >
             <Radio.Group>
-              <Radio value="true"> true </Radio>
-              <Radio value="false"> false </Radio>
+              <Radio value="true" data-testid="sensitive-true">
+                {" "}
+                true{" "}
+              </Radio>
+              <Radio value="false" data-testid="sensitive-false">
+                {" "}
+                false{" "}
+              </Radio>
             </Radio.Group>
           </Form.Item>
           <Form.Item label="Writer-Id" name={"writerId"}>
@@ -236,7 +266,7 @@ const Create = () => {
             <TextArea rows={3} />
           </Form.Item>
           <Form.Item label=" " colon={false}>
-            <Button type="primary" htmlType="submit">
+            <Button data-testid="add-btn" type="primary" htmlType="submit">
               ADD
             </Button>
           </Form.Item>

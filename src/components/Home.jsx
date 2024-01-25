@@ -1,30 +1,14 @@
 import React from "react";
-import { UploadOutlined, EyeOutlined } from "@ant-design/icons";
-import { Layout, Menu, theme } from "antd";
+import { Layout, Menu } from "antd";
 import { useNavigate } from "react-router-dom";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-const {Content,Sider } = Layout;
-
-// const items = [
-//   {
-//     id: 1,
-//     icon: React.createElement(EyeOutlined),
-//     label: "list",
-//   },
-//   {
-//     id: 2,
-//     icon: React.createElement(UploadOutlined),
-//     label: "upload",
-//   },
-// ];
+const { Content, Sider } = Layout;
 
 const Home = ({ children }) => {
   const navigate = useNavigate();
 
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  const borderRadiusLG = "8px";
 
   const handleList = () => {
     navigate("/view");
@@ -32,27 +16,62 @@ const Home = ({ children }) => {
 
   return (
     <Layout>
-      <Sider>
+      <Sider
+        style={{
+          backgroundColor: "#222",
+          padding: "16px",
+          minHeight: "100vh",
+        }}
+      >
         <div className="demo-logo-vertical" />
 
-        <Menu theme="dark" mode="inline" defaultSelectedKeys={["1"]}>
-          <Menu.Item onClick={handleList}>View</Menu.Item>
+        <Menu
+          mode="inline"
+          defaultSelectedKeys={["1"]}
+          style={{ backgroundColor: "#222", color: "white" }}
+        >
+          <Menu.Item
+            id="1"
+            onClick={handleList}
+            style={{ border: "4px solid black" }}
+          >
+            View
+          </Menu.Item>
 
-          <Menu.Item onClick={() => navigate("/upload")}>Bulk Upload</Menu.Item>
-          <Menu.Item onClick={() => navigate("/bulk-list")}>
+          <Menu.Item
+            id="2"
+            onClick={() => navigate("/upload")}
+            style={{ border: "4px solid black" }}
+          >
+            Bulk Upload
+          </Menu.Item>
+          <Menu.Item
+            id="3"
+            onClick={() => navigate("/bulk-list")}
+            style={{ border: "4px solid black" }}
+          >
             Bulk Upload Listing
           </Menu.Item>
-          <Menu.Item onClick={() => navigate("/")}>logout</Menu.Item>
+          <Menu.Item
+            id="4"
+            onClick={() => {
+              localStorage.removeItem("authToken");
+              navigate("/");
+            }}
+            style={{ border: "4px solid black" }}
+          >
+            logout
+          </Menu.Item>
         </Menu>
       </Sider>
-      <Layout>
-        <Content style={{ margin: "24px 16px 0" }}>
+      <Layout style={{ margin: 0, padding: 0 }}>
+        <Content>
           <div
             style={{
               margin: 0,
-              padding: 24,
-              minHeight: 700,
-              background: colorBgContainer,
+              padding: 0,
+              minHeight: "100vh",
+              background: "#ccc",
               borderRadius: borderRadiusLG,
             }}
           >
@@ -63,8 +82,8 @@ const Home = ({ children }) => {
     </Layout>
   );
 };
-// Home.propTypes = {
-//   children: PropTypes.node.isRequired,
-// };
+Home.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 export default Home;

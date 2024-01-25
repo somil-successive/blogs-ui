@@ -1,16 +1,22 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Home from "./Home";
 import "./DetailedView.css";
+import { Image } from "antd";
 
 const DetailedView = () => {
   const { id } = useParams();
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
 
   const getData = async () => {
-    const res = await axios.get(`http://localhost:4000/blogs/getbyid/${id}`);
-    setData(res.data.data);
+    try {
+      const res = await axios.get(`http://localhost:4000/blogs/getbyid/${id}`);
+      setData(res?.data?.data);
+    } catch (err) {
+      navigate("/other");
+    }
   };
   useEffect(() => {
     getData();
@@ -19,7 +25,7 @@ const DetailedView = () => {
   return (
     <Home>
       <div className="blog-details-container">
-        <img src={data?.imageUrl} alt="logo" className="blog-image" />
+        <Image src={data?.imageUrl} alt="logo" className="blog-image" />
         <h1 className="blog-title" style={{ fontStyle: "italic" }}>
           {data?.title}
         </h1>

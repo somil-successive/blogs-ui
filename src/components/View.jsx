@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, List, Modal, Spin } from "antd";
+import { List, Modal, Spin } from "antd";
 import axios from "axios";
 import {
   EyeOutlined,
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
-  FilterOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import Home from "./Home";
@@ -33,12 +32,22 @@ const View = () => {
   const handleSearch = () => {
     if (search.length > 0) {
       searchData();
-      setSearch("");
     }
   };
 
   const deleteIt = async (bid) => {
-    await axios.delete(`http://localhost:4000/blogs/${bid}`);
+    try {
+      await axios.delete(`http://localhost:4000/blogs/${bid}`, {
+        headers: {
+          Authorization: localStorage.getItem("authToken"),
+        },
+      });
+    } catch (error) {
+      if (error.response?.status === 401) {
+        localStorage.removeItem("authToken");
+        navigate("/");
+      }
+    }
   };
 
   const handleOk = () => {
@@ -51,7 +60,7 @@ const View = () => {
     setIsModalOpen(false);
   };
 
-  const handleEdit = (bid) => {
+  const handleEdit = async (bid) => {
     navigate(`/update/${bid}`);
   };
   const handleView = async (bid) => {
@@ -60,11 +69,12 @@ const View = () => {
 
   const getData = async () => {
     setLoading(true);
-    const token =localStorage.getItem('token')
+    const token = localStorage.getItem("token");
     const { data } = await axios.get(
-      `http://localhost:4000/blogs/get?page=${page}&limit=${limit}`,{
+      `http://localhost:4000/blogs/get?page=${page}&limit=${limit}`,
+      {
         headers: {
-          'Authorization': token
+          Authorization: token,
         },
       }
     );
@@ -103,7 +113,18 @@ const View = () => {
   };
 
   useEffect(() => {
-    getData();
+    if (filterValue !== "all") {
+      filterData();
+    }
+  }, [filterValue]);
+
+  useEffect(() => {
+    if (!search && filterValue === "all") getData();
+    else if (search) {
+      searchData();
+    } else if (filterValue !== "all") {
+      filterData();
+    }
   }, [page]);
 
   if (blog.length === 0) {
@@ -125,30 +146,44 @@ const View = () => {
   };
 
   const handleCreate = () => {
-    navigate("/create");
+    navigate("/update/create");
+  };
+
+  const handleSearchWithKey = async (e) => {
+    if (e.key === "Enter") {
+      searchData();
+    }
   };
 
   return (
     <Home>
       <div
+        data-testid="header-div"
         style={{
-          border: "2px solid black",
-          height: 40,
+          backgroundColor: "#333",
+          display: "flex",
+          alignItems: "center",
+          padding: "0 4px",
+          height: "60px",
           margin: 0,
-          padding: 0,
+          borderBottom: "2px solid black",
         }}
       >
         <input
+          id="search"
           type="text"
+          data-testid="search-input"
           placeholder="Search Here...."
           value={search}
           style={{
             border: "2px solid black",
             height: 30,
             margin: 0,
-            padding: 0,
+            padding: "0 8px",
+            borderRadius: "4px",
           }}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleSearchWithKey}
         />
 
         <SearchOutlined
@@ -158,20 +193,29 @@ const View = () => {
             border: "2px solid black",
             height: 30,
             width: 30,
-            margin: 4,
-            padding: 2,
+            margin: "0 4px",
+            padding: "2px",
+            color: "white",
+            cursor: "pointer",
           }}
         />
 
         <select
+          name="menubar"
           value={filterValue}
+          data-testid="filter-menu"
           style={{
             border: "2px solid black",
             height: 30,
-            margin: 5,
+            margin: "0 5px",
             padding: 0,
+            backgroundColor: "#444",
+            color: "white",
           }}
-          onChange={(e) => setFilterValue(e.target.value)}
+          onChange={(e) => {
+            setFilterValue(e.target.value);
+            handleFilter();
+          }}
         >
           <option value="all">All</option>
           <option value="travel">Travel</option>
@@ -180,18 +224,8 @@ const View = () => {
           <option value="lifestyle">Lifestyle</option>
         </select>
 
-        <FilterOutlined
-          onClick={handleFilter}
-          style={{
-            border: "2px solid black",
-            height: 30,
-            width: 30,
-            margin: 4,
-            padding: 2,
-          }}
-        />
-        <Button
-        data-testid="create-btn"
+        <button
+          data-testid="create-icon"
           type="dashed"
           onClick={handleCreate}
           style={{
@@ -203,7 +237,7 @@ const View = () => {
           }}
         >
           create
-        </Button>
+        </button>
       </div>
 
       <Modal
@@ -214,9 +248,10 @@ const View = () => {
       >
         <p>Do you want to delete</p>
       </Modal>
-      {loading ? <Spin /> : null}
+      {loading ? <Spin data-testid="spinner" /> : null}
 
       <List
+        data-testid="list-blog"
         itemLayout="vertical"
         size="large"
         dataSource={blog}
@@ -243,14 +278,20 @@ const View = () => {
             <br />
 
             <EyeOutlined
+              data-testid="view-btn"
               onClick={() => handleView(item?._id)}
               style={{ marginRight: 40 }}
             />
             <EditOutlined
+              data-testid="edit-btn"
               onClick={() => handleEdit(item._id)}
               style={{ marginRight: 40 }}
             />
-            <DeleteOutlined onClick={() => handleDelete(item?._id)} />
+
+            <DeleteOutlined
+              data-testid="delete-btn"
+              onClick={() => handleDelete(item?._id)}
+            />
           </List.Item>
         )}
       />
