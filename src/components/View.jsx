@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import Home from "./Home";
+import { Base_API } from "../config/config";
 
 const View = () => {
   const [blog, setBlog] = useState([]);
@@ -37,7 +38,7 @@ const View = () => {
 
   const deleteIt = async (bid) => {
     try {
-      await axios.delete(`http://localhost:4000/blogs/${bid}`, {
+      await axios.delete(`${Base_API}/${bid}`, {
         headers: {
           Authorization: localStorage.getItem("authToken"),
         },
@@ -71,7 +72,9 @@ const View = () => {
     setLoading(true);
     const token = localStorage.getItem("token");
     const { data } = await axios.get(
-      `http://localhost:4000/blogs/get?page=${page}&limit=${limit}`,
+      // `http://localhost:4000/blogs/get?page=${page}&limit=${limit}`,
+      `${Base_API}/get?page=${page}&limit=${limit}`,
+
       {
         headers: {
           Authorization: token,
@@ -86,7 +89,7 @@ const View = () => {
     setLoading(true);
     try {
       const { data } = await axios.get(
-        `http://localhost:4000/blogs/search/${search}?page=${page}&limit=${limit}`
+        `${Base_API}/search/${search}?page=${page}&limit=${limit}`
       );
       setBlog(data.data);
     } catch (err) {
@@ -98,7 +101,8 @@ const View = () => {
 
   const filterData = async () => {
     const { data } = await axios.get(
-      `http://localhost:4000/blogs/getbycategories/${filterValue}?page=${page}&limit=${limit}`
+      // `http://localhost:4000/blogs/getbycategories/${filterValue}?page=${page}&limit=${limit}`
+      `${Base_API}/getbycategories/${filterValue}?page=${page}&limit=${limit}`
     );
     setBlog(data.data);
   };

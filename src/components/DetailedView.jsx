@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Home from "./Home";
 import "./DetailedView.css";
 import { Image } from "antd";
+import { Base_API } from "../config/config";
 
 const DetailedView = () => {
   const { id } = useParams();
@@ -12,7 +13,7 @@ const DetailedView = () => {
 
   const getData = async () => {
     try {
-      const res = await axios.get(`http://localhost:4000/blogs/getbyid/${id}`);
+      const res = await axios.get(`${Base_API}/getbyid/${id}`);
       setData(res?.data?.data);
     } catch (err) {
       navigate("/other");
@@ -53,11 +54,19 @@ const DetailedView = () => {
               {data?.tags}
             </p>
             <p>
+              <strong>Created By:</strong>
+              {data?.createdBy}
+            </p>
+            <p>
+              <strong>Updated By:</strong>
+              {data?.updatedBy}
+            </p>
+            <p>
               <strong>Created At:</strong>
               {data?.createdAt}
             </p>
             <p>
-              <strong>Last Updated:</strong>
+              <strong>Last Updated At:</strong>
               {data?.updatedAt}
             </p>
           </div>

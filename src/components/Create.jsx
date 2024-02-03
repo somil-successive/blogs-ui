@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { Card, Button, Form, Input, InputNumber, Radio, Select } from "antd";
 import Home from "./Home";
+import { Base_API } from "../config/config";
 
 const { TextArea } = Input;
 
@@ -41,9 +42,7 @@ const Create = () => {
 
   const fetchItem = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:4000/blogs/getbyid/${id}`
-      );
+      const response = await axios.get(`${Base_API}/getbyid/${id}`);
       const itemData = response.data.data;
       console.log(itemData);
 
@@ -118,7 +117,7 @@ const Create = () => {
 
   const handleAdd = async (newBlogsItem) => {
     try {
-      await axios.post("http://localhost:4000/blogs/create", newBlogsItem, {
+      await axios.post(`${Base_API}/create`, newBlogsItem, {
         headers: {
           Authorization: localStorage.getItem("authToken"),
         },
@@ -134,15 +133,11 @@ const Create = () => {
 
   const handleUpdate = async (updatedBlogsItem) => {
     try {
-      await axios.patch(
-        `http://localhost:4000/blogs/updatebyid/${id}`,
-        updatedBlogsItem,
-        {
-          headers: {
-            Authorization: localStorage.getItem("authToken"),
-          },
-        }
-      );
+      await axios.patch(`${Base_API}/updatebyid/${id}`, updatedBlogsItem, {
+        headers: {
+          Authorization: localStorage.getItem("authToken"),
+        },
+      });
 
       navigate("/view");
     } catch (error) {

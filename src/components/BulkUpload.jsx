@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Home from "./Home";
 import { Card, Spin } from "antd";
+import { Base_API } from "../config/config";
 
 const BulkUpload = () => {
   const [file, setFile] = useState(null);
@@ -17,7 +18,7 @@ const BulkUpload = () => {
     formData.append("file", file);
 
     try {
-      await axios.post("http://localhost:4000/blogs/bulk-upload", formData, {
+      await axios.post(`${Base_API}bulk-upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -35,7 +36,6 @@ const BulkUpload = () => {
     <Home>
       {uploading ? (
         <div>
-          {/* <Progress status="active" /> */}
           <Spin />
         </div>
       ) : null}

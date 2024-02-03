@@ -26,6 +26,7 @@ const Login = () => {
       if (res.status === 200) {
         localStorage.setItem("authToken", res?.data.authToken);
         message.success("Login Successfull");
+
         navigate("/view");
       } else {
         throw new Error("Login Failed");
@@ -154,7 +155,7 @@ const Login = () => {
                   {
                     min: 8,
                     message: "Password must be at least 8 characters",
-                  }
+                  },
                 ]}
                 style={{ margin: 5 }}
               >

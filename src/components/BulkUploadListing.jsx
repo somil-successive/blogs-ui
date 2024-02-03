@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Table, Button, Spin } from "antd";
 import Home from "./Home";
+import { Base_API } from "../config/config";
 
 const BulkUploadListing = () => {
   const [bulkUploads, setBulkUploads] = useState([]);
@@ -15,9 +16,7 @@ const BulkUploadListing = () => {
 
   const fetchApiResponse = async () => {
     try {
-      const apiResponse = await axios.get(
-        `http://localhost:4000/blogs/bulk-uploads-list`
-      );
+      const apiResponse = await axios.get(`${Base_API}/bulk-uploads-list`);
       setBulkUploads(apiResponse.data.data);
     } catch (error) {
       alert("Error fetching data:");

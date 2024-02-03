@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Table, Spin } from "antd";
 import Home from "./Home";
 import axios from "axios";
+import { Base_API } from "../config/config";
 
 const BulkErrorDetail = () => {
   const { session_id } = useParams();
@@ -14,7 +15,7 @@ const BulkErrorDetail = () => {
   const handleApiResponse = async () => {
     try {
       const apiResponse = await axios.get(
-        `http://localhost:4000/blogs/bulk-uploads-errors/${session_id}`
+        `${Base_API}/bulk-uploads-errors/${session_id}`
       );
       setBulkErrors(apiResponse.data.data);
     } catch (error) {
@@ -47,8 +48,8 @@ const BulkErrorDetail = () => {
     return <Spin data-testid="spinner" size="large" />;
   }
 
-  if(bulkErrors.length===0){
-    return <h3>No Record Found!</h3>
+  if (bulkErrors.length === 0) {
+    return <h3>No Record Found!</h3>;
   }
 
   if (myError) {
